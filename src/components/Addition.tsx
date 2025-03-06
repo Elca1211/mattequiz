@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 
 interface AdditionProps {
-    data: any[];
     difficulty: string;
     updateHighScore: (score: number, game: string) => void;
 }
 
-const Addition: React.FC<AdditionProps> = ({ data, difficulty, updateHighScore }) => {
-    const [num1, setNum1] = useState<number | null>(null);
-    const [num2, setNum2] = useState<number | null>(null);
+const Addition: React.FC<AdditionProps> = ({ difficulty, updateHighScore }) => {
+    const [num1, setNum1] = useState(1);
+    const [num2, setNum2] = useState(1);
     const [userAnswer, setUserAnswer] = useState("");
     const [message, setMessage] = useState("");
     const [score, setScore] = useState(0);
@@ -17,38 +16,24 @@ const Addition: React.FC<AdditionProps> = ({ data, difficulty, updateHighScore }
     const [gameOver, setGameOver] = useState(false);
 
     const getRandomNumbers = () => {
-        if (data.length >= 20) {
-            let maxNum = difficulty === "easy" ? 10 : difficulty === "medium" ? 50 : 100;
-
-            let newNum1 = Math.floor(Math.random() * maxNum) + 1;
-            let newNum2 = Math.floor(Math.random() * maxNum) + 1;
-
-            setNum1(newNum1);
-            setNum2(newNum2);
-        }
+        const maxNum = difficulty === "easy" ? 10 : difficulty === "medium" ? 50 : 100;
+        setNum1(Math.floor(Math.random() * maxNum) + 1);
+        setNum2(Math.floor(Math.random() * maxNum) + 1);
     };
-
     useEffect(() => {
-        if (data.length > 1) {
-            getRandomNumbers();
-        }
-    }, [data]);
+        getRandomNumbers();
+    }, []);
 
     const checkAnswer = () => {
-        if (num1 === null || num2 === null) return; 
-
-        const correctAnswer = num1 + num2;
-
-        if (parseInt(userAnswer) === correctAnswer) {
-            let points = difficulty === "easy" ? 1 : difficulty === "medium" ? 3 : 5;
-            setScore((prevScore) => prevScore + points);
+        if (parseInt(userAnswer) === num1 + num2) {
+            setScore((prev) => prev + (difficulty === "easy" ? 1 : difficulty === "medium" ? 3 : 5));
             setMessage("✅ Rätt svar!");
         } else {
-            setMessage(`❌ Fel! Rätt svar var ${correctAnswer}`);
+            setMessage(`❌ Fel! Rätt svar var ${num1 + num2}`);
         }
 
         if (round < totalRounds) {
-            setRound((prevRound) => prevRound + 1);
+            setRound((prev) => prev + 1);
             getRandomNumbers();
             setUserAnswer("");
         } else {
@@ -76,22 +61,12 @@ const Addition: React.FC<AdditionProps> = ({ data, difficulty, updateHighScore }
             ) : (
                 <>
                     <h2>Fråga {round}/{totalRounds}</h2>
-                    {num1 !== null && num2 !== null ? (
-                        <p>{num1} + {num2} = ?</p>
-                    ) : (
-                        <p>⏳ Laddar fråga...</p>
-                    )}
-
-                <input
-                    type="number"
-                    value={userAnswer}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            e.preventDefault();
-                            checkAnswer();
-                        }
-                    }}
+                    <p>{num1} + {num2} = ?</p>
+                    <input
+                        type="number"
+                        value={userAnswer}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
                     />
                     <button onClick={checkAnswer}>Svara</button>
                     <p>{message}</p>
