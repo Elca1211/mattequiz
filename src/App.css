@@ -1,40 +1,57 @@
+
+/* URL import av typsnitt från Google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
 
+
+/* --- Huvud-designen --- */
 .App {
   width: 100vw;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
   background-color: darkcyan;
   font-family: "Neucha", cursive;
   text-align: center;
+  position: relative; 
 }
 
 
+/* --- Användarnamn/"inlogg" --- */
 .username-container {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.225);
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 30px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .username-container input {
   padding: 10px;
-  font-size: 18px;
+  font-size: 20px;
   border: none;
-  border-radius: 5px;
-  margin: 10px 0;
+  border-radius: 10px;
   text-align: center;
+  height: auto;
+  width: 230px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.username-container input:hover {
+  background-color: white;
+  transform: scale(1.05);
 }
 
 .username-container button {
   background-color: #ffbf00;
   border: none;
   padding: 10px 20px;
-  font-size: 18px;
+  font-size: 20px;
   border-radius: 10px;
   cursor: pointer;
+  width: 153px;
   transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .username-container button:hover {
@@ -42,70 +59,185 @@
   transform: scale(1.1);
 }
 
+
+/* --- Rubriker --- */
+.first-heading {
+  font-size: 37px;
+  margin: 15px 0px;
+  color: rgb(255, 255, 255);
+  z-index: 1;
+  text-align: center;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
 .subtitle {
-  font-size: 40px;
+  font-size: 38px;
   color: white;
   text-align: center;
   margin: 5px 0;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .heading {
   text-transform: uppercase;
-  font-size: 50px;
-  margin: 20px 0;
-  color: white;
+  font-size: 60px;
+  margin-top: 5%;  
+  color: rgb(255, 255, 255);
   z-index: 1;
   text-align: center;
+  right: 100px;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-.menu, .difficulty-menu {
+/* --- "Nivå"-knappar --- */
+.difficulty-menu {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
   margin: 20px 0;
 }
 
-.menu button, .difficulty-menu button {
-  background-color: #ffbf009c;
-  border: none;
-  padding: 15px 30px;
-  font-size: 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
+.easy-btn {
+  background-color: rgb(0, 143, 0);
 }
 
-.menu button:hover, .difficulty-menu button:hover {
-  background-color: #ffbf00df;
+.medium-btn {
+  background-color:  rgb(230, 111, 0);
+}
+
+.hard-btn {
+  background-color: red;
+  
+}
+.easy-btn:hover { /* Hover-effekter (in-zoom) i samma färg som knappen */
+  background-color: rgb(0, 91, 0);
   transform: scale(1.1);
 }
 
-.highscore-container {
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 15px;
+.medium-btn:hover {
+  background-color:  rgb(166, 81, 2);
+  transform: scale(1.1);
+}
+
+.hard-btn:hover {
+  background-color: darkred;
+  transform: scale(1.1);
+}
+
+.easy-btn:active { /* När knappen är klickad (active) */
+  background-color: #005700; /* Mörkare grön */
+  transform: scale(1.1);
+}
+
+.medium-btn:active {
+  background-color: #b35900; /* Mörkare orange */
+  transform: scale(1.1);
+}
+
+.hard-btn:active {
+  background-color: #8b0000; /* Mörkare röd */
+  transform: scale(1.1);
+}
+
+.selected { /* När knappen är vald */
+  filter: brightness(85%);
+  transform: scale(1.1);
+}
+
+.menu, .difficulty-menu { /* "Nivå-menyns" utseende" */
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+}
+.menu button, .difficulty-menu button {
+  border: none;
+  padding: 15px 30px;
+  font-size: 20px;
   border-radius: 10px;
-  margin-top: 20px;
-  width: 80%;
-  max-width: 400px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu button:hover, .difficulty-menu button:hover {
+  transform: scale(1.05);
+}
+
+
+/* --- "Spelvalsknappar" --- */
+.menu button {
+  background-color: #0099fe; 
+  border: none;
+  padding: 15px 30px;
+  font-size: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: white;
+}
+
+.menu button:hover {
+  background-color: #006cb5; /* Mörkare blå */
+  transform: scale(1.1);
+}
+
+.menu button:active {/* När knappen är klickad (active) */
+  background-color: #00375c; /* Ännu mörkare blå */
+  transform: scale(0.95);
+}
+
+.menu .selected { /* När knappen är vald */
+  filter: brightness(85%);
+  transform: scale(1.05);
+}
+
+
+.main-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  width: 90%;
+  background-color: darkcyan;
+  top: 10px;
+  
+}
+
+.content-container {
+  flex: 1;
   text-align: center;
 }
 
-.highscore-container h3 {
-  font-size: 24px;
-  margin-bottom: 10px;
+/* --- High-score tavlan --- */
+.highscore-container {
+  background-color: rgb(0, 172, 172);
+  padding: 15px;
+  border-radius: 10px;
+  width: 270px; 
+  text-align: center;
+  position: relative; 
+  margin-top: 20px; 
+  width: 180px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.highscore-container h3 { /* "Highscore-texten" */
+  font-size: 22px;
 }
 
 .highscore-container ul {
   list-style-type: none;
   padding: 0;
+  margin: 1px;
 }
 
 .highscore-container li {
-  font-size: 18px;
+  font-size: 16px;
   padding: 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+
+/* --- Responsiv design --- */
 @media (max-width: 800px) {
   .heading {
     margin: 60px 0;
@@ -114,27 +246,11 @@
 }
 
 
-.back-button {
-  margin: 20px;
-  padding: 10px 20px;
-  font-size: 20px;
-  background-color: #ff5555;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-
-.back-button:hover {
-  background-color: #ff0000;
-  transform: scale(1.1);
-}
-
+/* --- Spelets container --- */
 .game-container {
   text-align: center;
   font-family: Arial, sans-serif;
-  font-size: 30px;
+  font-size: 25px;
   background-color: rgb(1, 196, 196);
   padding: 40px;
   border-radius: 40px;
@@ -142,14 +258,8 @@
   margin: auto;
 }
 
-.mult-container {
-  text-align: center;
-  color: rgb(0, 49, 49);
-  font-family: Arial, sans-serif;
-  font-size: xx-large;
-  margin: auto;
-}
 
+/* --- Inputfält --- */
 input {
   width: 100px;
   height: 25px;
@@ -164,6 +274,76 @@ input:focus {
   box-shadow: 0px 0px 10px rgba(255, 191, 0, 0.8);
 }
 
+
+
+/* --- Spelet slut --- */
+.game-over {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  margin: 30px auto;
+}
+
+.game-over h2 {
+  font-size: 28px;
+  color: #d63031;
+}
+
+.game-over p {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
+.game-over button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.game-over button:hover {
+  background-color: #2980b9;
+} 
+
+/* --- Tillbaka till menyn --- */
+.back-button {
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 20px;
+  background-color: white;
+  color: darkcyan;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+
+}
+
+.back-button:hover {
+  background-color: #bdbdbd;
+  transform: scale(1.1);
+}
+
+
+
+.mult-container {
+  text-align: center;
+  color: rgb(0, 49, 49);
+  font-family: Arial, sans-serif;
+  font-size: xx-large;
+  margin: auto;
+}
+
+
 button {
   background-color: #55ad58;
   text-align: center;
@@ -177,8 +357,61 @@ button {
 
 button:hover {
   background-color: #45a049;
+  transform: scale(1.1);
+}
+.table-selection-container {
+  background-color: #00b3b3; /* Turkos färg */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+.table-selection-container h2 {
+  font-size: 28px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Skapar en snygg 2-kolumns grid för knapparna */
+.table-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px; /* Mer avstånd mellan knappar */
+}
+
+.table-buttons button {
+  background-color: #2e7d32; /* Grön färg */
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  min-width: 120px; /* Se till att knapparna är lika stora */
+}
+
+/* Hover-effekt */
+.table-buttons button:hover {
+  background-color: #1b5e20; /* Mörkare grön */
+  transform: scale(1.1);
+}
+
+/* När knappen är klickad */
+.table-buttons button:active {
+  background-color: #104a13;
+  transform: scale(0.95);
+}
+
+/*
 .table-exercise-container {
   background-color: #fff;
   padding: 30px;
@@ -225,38 +458,5 @@ button:hover {
 .table-exercise-container button:hover {
   background-color: #e67e00;
 }
+*/
 
-.game-over {
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  margin: 30px auto;
-}
-
-.game-over h2 {
-  font-size: 28px;
-  color: #d63031;
-}
-
-.game-over p {
-  font-size: 20px;
-  margin: 10px 0;
-}
-
-.game-over button {
-  background-color: #3498db;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-.game-over button:hover {
-  background-color: #2980b9;
-}

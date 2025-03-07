@@ -12,8 +12,13 @@ const MultiplicationGame: React.FC<MultiplicationGameProps> = ({ difficulty, upd
   const [message, setMessage] = useState("");
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
-  const totalRounds = 10;
   const [gameOver, setGameOver] = useState(false);
+
+  const totalRounds = 10;
+  const points = difficulty === "easy" ? 1 
+                  : difficulty === "medium" ? 3 
+                  : 5;
+
 
   const getRandomNumbers = () => {
     const maxNum = difficulty === "easy" ? 10 : difficulty === "medium" ? 50 : 100;
@@ -21,20 +26,19 @@ const MultiplicationGame: React.FC<MultiplicationGameProps> = ({ difficulty, upd
     setNum2(Math.floor(Math.random() * maxNum) + 1);
   };
   
-  useEffect(() => {
-    getRandomNumbers();
-  }, []);
+  useEffect(getRandomNumbers, []);
 
   const checkAnswer = () => {
-    if (parseInt(userAnswer) === num1 * num2) {
-      setScore((prev) => prev + (difficulty === "easy" ? 1 : difficulty === "medium" ? 3 : 5));
-      setMessage("✅ Rätt svar!");
-    } else {
-      setMessage(`❌ Fel! Rätt svar var ${num1 * num2}`);
-    }
+    const correctAnswer = num1 * num2;
+    setMessage(parseInt(userAnswer) === correctAnswer 
+                                    ? "✅ Rätt svar!" 
+                                    : `❌ Fel! Rätt svar var ${correctAnswer}`);
+    if (parseInt(userAnswer) === correctAnswer) setScore((prev) => prev + points);
+
+
 
     if (round < totalRounds) {
-      setRound((prev) => prev + 1);
+      setRound(round + 1);
       getRandomNumbers();
       setUserAnswer("");
     } else {

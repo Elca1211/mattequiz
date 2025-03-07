@@ -12,31 +12,35 @@ const Division: React.FC<DivisionProps> = ({ difficulty, updateHighScore }) => {
   const [message, setMessage] = useState("");
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
-  const totalRounds = 10;
   const [gameOver, setGameOver] = useState(false);
 
+  const totalRounds = 10;
+  const points = difficulty === "easy" ? 1 
+                  : difficulty === "medium" ? 3 
+                  : 5;
+
+
   const getRandomNumbers = () => {
-    const maxNum = difficulty === "easy" ? 10 : difficulty === "medium" ? 50 : 100;
+    const maxNum = difficulty === "easy" ? 10 
+                    : difficulty === "medium" ? 50 
+                    : 100;
     let divisor = Math.floor(Math.random() * (maxNum / 2)) + 1; // Undviker 0
     let dividend = divisor * (Math.floor(Math.random() * 10) + 1); // Skapar en multipel
-
     setNum1(dividend);
     setNum2(divisor);
   };
-  useEffect(() => {
-    getRandomNumbers();
-}, []);
+
+  useEffect(getRandomNumbers, []);
 
   const checkAnswer = () => {
-    if (parseInt(userAnswer) === num1 / num2) {
-      setScore((prev) => prev + (difficulty === "easy" ? 1 : difficulty === "medium" ? 3 : 5));
-      setMessage("✅ Rätt svar!");
-    } else {
-      setMessage(`❌ Fel! Rätt svar var ${num1 / num2}`);
-    }
+    const correctAnswer = num1 / num2;
+    setMessage(parseInt(userAnswer) === correctAnswer 
+                                ? "✅ Rätt svar!" 
+                                : `❌ Fel! Rätt svar var ${correctAnswer}`);
+    if (parseInt(userAnswer) === correctAnswer) setScore((prev) => prev + points);
 
     if (round < totalRounds) {
-      setRound((prev) => prev + 1);
+      setRound(round + 1);
       getRandomNumbers();
       setUserAnswer("");
     } else {
