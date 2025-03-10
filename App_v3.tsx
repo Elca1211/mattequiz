@@ -5,8 +5,9 @@ import TableMultiplication from "./components/TableMultiplication";
 import Addition from "./components/Addition";
 import Subtraktion from "./components/Subtraktion";
 import Division from "./components/Division";
-import useFetch from "./hooks/useFetch"; // Lägg tillbaka CSV-fetching
-import vecteezy from "./assets/vecteezy_children-with-math-objects.jpg";
+import useFetch from "./hooks/useFetch"; 
+import mathImage from "../public/vecteezy.jpg";
+
 
 // FROM LECTURE 8B men med arrays ist för lists
 // IMMUTABLE FIFO QUEUE IMPLEMENTATION
@@ -44,18 +45,17 @@ function dequeue<T>(q: NonEmptyQueue<T>): Queue<T> {
   return q[1];
 }
 
-
 const App: React.FC = () => {
   const [option, setOption] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [inputName, setInputName] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("easy");
   const [highScores, setHighScores] = useState<{ [key: string]: Queue<number> }>({});
-  const [data, setData] = useState<any[]>([]); // ✅ Lägg tillbaka data
+  const [data, setData] = useState<any[]>([]); // Lagrar hämtad CSV data
   const { fetchCsvData } = useFetch();
 
-   // ✅ Hämta CSV-data vid start
-   useEffect(() => {
+  // Hämta CSV-data vid start
+  useEffect(() => {
     fetchCsvData("/mathdata.csv", setData);
   }, []);
   
@@ -112,7 +112,7 @@ const App: React.FC = () => {
               <div className="username-container">
                   <h1>MATTEQUIZ</h1>
                   <a href="https://www.vecteezy.com/vector-art/4758919-children-with-math-objects" target="_blank">
-                      <img src={vecteezy} className="jpg" alt="vecteezy" width="300px" height="250" />
+                      <img src={mathImage} className="jpg" alt="vecteezy" width="300px" height="250" />
                   </a> 
                   <h2>Välj ditt användarnamn</h2>
                   <input
@@ -186,9 +186,6 @@ const App: React.FC = () => {
 
               </div>
            </div>
-
-
-
         </>
       ) : (
         <>
