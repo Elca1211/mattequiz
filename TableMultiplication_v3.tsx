@@ -1,31 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import useFetch from "../hooks/useFetch";
 
-interface TableMultiplicationProps {
-  data: number | string[];
+// FIFO-kö implenteras 
+type NonEmptyQueue<T> = [T, Queue<T>];
+type Queue<T> = null | NonEmptyQueue<T>;
+
+// QUEUE functions 
+function empty<T>(): Queue<T> {
+  return null;
 }
 
-const TableMultiplication: React.FC<TableMultiplicationProps> = () => {
-  const [table, setTable] = useState<number | null>(null);
-  const [questionQueue, setQuestionQueue] = useState<number[]>([]);
+function is_empty<T>(q: Queue<T>): q is null {
+  return q === null;
+}
+
+function enqueue<T>(e: T, q: Queue<T>): NonEmptyQueue<T> {
+  if (q === null) return [e, null];
+  return [q[0], enqueue(e, q[1])];
+}
+
+function head<T>(q: NonEmptyQueue<T>): T {
+  return q[0];
+}
+
+function dequeue<T>(q: NonEmptyQueue<T>): Queue<T> {
+  return q[1];
+}
+
+interface TableMultiplicationProps {
+  data: any[];
+}
+
+const TableMultiplication: React.FC <{ data: any[] }> = ({ data }) => {
+  const { fetchCsvData } = useFetch();
+  const [csvData, setCsvData] = useState<any[]>([]);
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const [questionQueue, setQuestionQueue] = useState<Queue<[number, number]>>(empty());
   const [userAnswer, setUserAnswer] = useState("");
   const [message, setMessage] = useState("");
   const [score, setScore] = useState(0);
+  const [round, setRound] = useState(1);
   const [gameOver, setGameOver] = useState(false);
 
-  const startGame = (selectedTable: number) => {
-    setTable(selectedTable);
-    setQuestionQueue(Array.from({ length: 10 }, (_, i) => i + 1)); // Skapar en kö med talen 1-10
-    setScore(0);
-    setMessage("");
-    setGameOver(false);
-    setUserAnswer("");
-  };
+  const totalRounds = 10;
 
+  // Hämta CSV-fil vid start
+  useEffect(() => {
+    fetchCsvData("/mathdata.csv", setCsvData);
+  }, []);
+
+  useEffect(() => {
+    if (selectedTable && csvData.length > 0) {
+      // Raden nedan hämtar number (kolumn 1) och den valda tabellens värden från CSV filen och lagrar som array par.
+      const newQueue = csvData.map((row: any) => [row.number, row[selectedTable]]) as [number, number][]; 
+      let q: Queue<[number, number]> = empty();
+      newQueue.forEach(pair => (q = enqueue(pair, q)));
+      setQuestionQueue(q);
+    }
+  }, [selectedTable, csvData]);
+  
   const checkAnswer = () => {
-    if (table === null || questionQueue.length === 0) return;
+    if (is_empty(questionQueue)) return;
 
-    const currentMultiplier = questionQueue[0]; // Tar första talet i kön
-    const correctAnswer = table * currentMultiplier;
+    const [num1, num2] = head(questionQueue);
+    const correctAnswer = num1 * num2;
 
     if (parseInt(userAnswer) === correctAnswer) {
       setScore((prev) => prev + 1);
@@ -34,50 +72,56 @@ const TableMultiplication: React.FC<TableMultiplicationProps> = () => {
       setMessage(`❌ Fel! Rätt svar var ${correctAnswer}`);
     }
 
-    setUserAnswer(""); // Rensa input
+    setUserAnswer("");
+    setQuestionQueue(dequeue(questionQueue as NonEmptyQueue<[number, number]>));
 
-    // Ta bort det första elementet i kön (nästa fråga)
-    const newQueue = questionQueue.slice(1);
-    setQuestionQueue(newQueue);
-
-    // Om kön är tom, avsluta spelet
-    if (newQueue.length === 0) {
+    if (round < totalRounds) {
+      setRound(round + 1);
+    } else {
       setGameOver(true);
     }
   };
 
-
   const restartGame = () => {
-    setTable(null);
+    setSelectedTable(null);
     setScore(0);
-    setQuestionQueue([]);
+    setRound(1);
     setMessage("");
     setGameOver(false);
+    setQuestionQueue(empty());
   };
 
+
   return (
-    <div className="game-frame-container">
-      {!table ? (
-         <div className="table-selection-container">
-         <h2>Välj en multiplikationstabell</h2>
-         <div className="table-buttons">
-           {[...Array(10)].map((_, num) => (
-             <button key={num + 1} onClick={() => startGame(num + 1)}>
-               Tabell {num + 1}
-             </button>
-          ))}
-        </div>
-      </div>
+      <div className="game-frame-container">
+          {!selectedTable ? (
+              <div className="table-selection-container">
+              <h2>Välj en multiplikationstabell</h2>
+                  <div className="table-buttons">
+                      {[...Array(10)].map((_, num) => (
+                      // här välj den aktuella tabellen ut från csv filen (som sedan används i newQueue)
+                      <button key={num + 1} onClick={() => setSelectedTable(`table${num + 1}`)}>
+                          Tabell {num + 1}
+                      </button>
+                      ))}
+                  </div>
+              </div>
+      
        ) : gameOver ? (
-        <div className="game-over">
-          <h2>🎮 Game Over! 🎉</h2>
-          <p>Du fick {score} av 10 rätt.</p>
-          <button onClick={restartGame}>🔄 Spela igen</button>
-        </div>
+          <div className="game-container">
+              <div className="game-over">
+                  <h2>🎮 Game Over! 🎉</h2>
+                  <p>Du fick {score} av 10 rätt.</p>
+                  <button onClick={restartGame}>🔄 Spela igen</button>
+              </div>
+          </div>
       ) : (
         <>
-          <h2>Fråga {10 - questionQueue.length + 1}/10</h2>
-          <p>{table} × {questionQueue[0]} = ?</p>
+          <div className="game-container">
+              <h2>Fråga {round}/{totalRounds}</h2>
+              {!is_empty(questionQueue) && (
+                  <p>{head(questionQueue)[0]} × {head(questionQueue)[1]} = ?</p>
+              )}
 
           <input
             type="number"
@@ -93,12 +137,11 @@ const TableMultiplication: React.FC<TableMultiplicationProps> = () => {
           <button onClick={checkAnswer}>Svara</button>
           <p>{message}</p>
           <p>Poäng: {score}</p>
+          </div>
         </>
       )}
-    </div>
+     </div>
   );
 };
-
-
 
 export default TableMultiplication;
