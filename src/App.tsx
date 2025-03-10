@@ -5,7 +5,10 @@ import TableMultiplication from "./components/TableMultiplication";
 import Addition from "./components/Addition";
 import Subtraktion from "./components/Subtraktion";
 import Division from "./components/Division";
-import useFetch from "./hooks/useFetch"; // Lägg tillbaka CSV-fetching
+import useFetch from "./hooks/useFetch"; 
+
+import mathImage from "../public/numbers4.png";
+
 
 // FROM LECTURE 8B men med arrays ist för lists
 // IMMUTABLE FIFO QUEUE IMPLEMENTATION
@@ -49,10 +52,10 @@ const App: React.FC = () => {
   const [inputName, setInputName] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("easy");
   const [highScores, setHighScores] = useState<{ [key: string]: Queue<number> }>({});
-  const [data, setData] = useState<any[]>([]); // ✅ Lägg tillbaka data
+  const [data, setData] = useState<any[]>([]); // Lagrar hämtad CSV data
   const { fetchCsvData } = useFetch();
 
-  // ✅ Hämta CSV-data vid start
+  // Hämta CSV-data vid start
   useEffect(() => {
     fetchCsvData("/mathdata.csv", setData);
   }, []);
@@ -192,7 +195,7 @@ const App: React.FC = () => {
           {option === "division" && <Division difficulty={difficulty} updateHighScore={updateHighScore} />}
           {option === "addition" && <Addition difficulty={difficulty} updateHighScore={updateHighScore} />}
           {option === "subtraktion" && <Subtraktion difficulty={difficulty} updateHighScore={updateHighScore} />}
-          {option === "tabeller" && <TableMultiplication data={data} />} {/* ✅ Nu finns data */}
+          {option === "tabeller" && <TableMultiplication data={data} />} 
         </>
       )}
     </div>
