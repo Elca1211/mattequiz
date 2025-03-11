@@ -56,37 +56,51 @@ const App: React.FC = () => {
     fetchCsvData("/mathdata.csv", setData);
   }, []);
   
-  const MAX_HIGHSCORES = 5;
+  const MAX_HIGHSCORES = 10;
 
 
   const updateHighScore = (score: number, game: string) => {
     if (!username) return;
-  
+
     setHighScores((prevScores) => {
-      const key = `${username}-${game}`;
-      
-      let q: Queue<number> = prevScores[key] ?? empty<number>(); // Använd empty queue om nyckeln inte finns
-  
-      q = enqueue(score, q); 
-  
-      // Begränsa antalet highscores till MAX_HIGHSCORES
-      let temp = q;
-      let count = 1;
-      while (temp[1] !== null) {
-        temp = temp[1];
-        count++;
-      }
-      if (count > MAX_HIGHSCORES) {
-        q = dequeue(q as NonEmptyQueue<number>); // Ta bort första elementet om kön är för stor
-      }
-  
-      const updatedScores = { ...prevScores, [key]: q };
-  
-      localStorage.setItem("highScores", JSON.stringify(updatedScores)); // Spara i localStorage
-      
-      return updatedScores;
+        const key = `${username}-${game}`;
+
+        // Hämta nuvarande highscore-lista eller skapa en tom lista
+        let scores: number[] = [];
+        let temp = prevScores[key] ?? empty<number>();
+
+        // Lägg till befintliga poäng i en array
+        while (temp !== null) {
+            scores.push(head(temp));
+            temp = dequeue(temp as NonEmptyQueue<number>);
+        }
+
+        // Lägg till den nya poängen
+        scores.push(score);
+
+        // Sortera poängen i fallande ordning (högsta först)
+        scores.sort((a, b) => b - a);
+
+        // Behåll endast de 5 bästa poängen
+        if (scores.length > 5) {
+            scores.pop(); // Tar bort den sämsta poängen (lägst värde)
+        }
+
+        // Återskapa kön från den sorterade listan
+        let q: Queue<number> = empty<number>();
+        for (let s of scores) {
+            q = enqueue(s, q);
+        }
+
+        // Uppdatera highscore-tabellen
+        const updatedScores = { ...prevScores, [key]: q };
+
+        // Spara i localStorage så att det bevaras mellan sessioner
+        localStorage.setItem("highScores", JSON.stringify(updatedScores));
+
+        return updatedScores;
     });
-  };
+};
   
 
   useEffect(() => {
@@ -162,21 +176,22 @@ const App: React.FC = () => {
                       <h3>🏆 Highscore</h3>
                       
                       {Object.entries(highScores).map(([userGame, q]) => (
-                          <div key={userGame}>
-                              <strong>{userGame.replace("-", " - ")}:</strong>
-                              <ul>
-                                  {(() => {
-                                      let scores: number[] = [];
-                                      let temp = q;
-                                      while (temp !== null) {
-                                          scores.push(head(temp));
-                                          temp = dequeue(temp);
-                                      }
-                                      return scores.map((s, index) => <li key={index}>{s} poäng</li>);
-                                  })()}
-                              </ul>
-                           </div>
-                      ))}
+  <div key={userGame}>
+    <strong>{userGame.replace("-", " - ")}:</strong>
+    <ul>
+      {(() => {
+        let scores: number[] = [];
+        let temp = q;
+        while (temp !== null) {
+          scores.push(head(temp));
+          temp = dequeue(temp);
+        }
+        return scores.map((s, index) => <li key={index}>{s} poäng</li>);
+      })()}
+    </ul>
+  </div>
+))}
+
                    </div>
 
               </div>
