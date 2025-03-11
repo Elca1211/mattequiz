@@ -6,10 +6,6 @@ import Addition from "./components/Addition";
 import Subtraktion from "./components/Subtraktion";
 import Division from "./components/Division";
 import useFetch from "./hooks/useFetch"; 
-
-import mathImage from "../public/numbers4.png";
-
-
 // FROM LECTURE 8B men med arrays ist för lists
 // IMMUTABLE FIFO QUEUE IMPLEMENTATION
 type NonEmptyQueue<T> = [T, Queue<T>];
@@ -107,98 +103,100 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      
       {!username ? (
-        <div className="username-container">
-          <h1 className="first-heading">Välj ditt användarnamn</h1>
-          <input
-            type="text"
-            placeholder="Skriv ditt namn"
-            value={inputName}
-            onChange={(e) => setInputName(e.target.value)}
-          />
-          <button 
-            onClick={() => setUsername(inputName.trim())}>Starta spelet</button>
-        </div>
+        <div className="main-frame-container">
+          <div className="username-container">
+          <h1>MATTEQUIZ</h1>
+                    <img src="/vecteezy_child.jpg" alt="Mattequiz" width="300px" height="250" />
+                  <h2>Välj ditt användarnamn</h2>
+                  <input
+                      type="text"
+                      placeholder="Skriv ditt namn"
+                      value={inputName}
+                      onChange={(e) => setInputName(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && setUsername(inputName.trim())}
+                   />
+                  <br />
+                  <br />
+                  <button onClick={() => setUsername(inputName.trim())}>Starta spelet</button>
+              </div>
+            </div>
       ) : !option ? (
         <>
-          <div className="main-container">
-  <div className="content-container">
-    <h1 className="heading">VÄLKOMMEN, {username}!</h1>
-
-    <h2 className="subtitle">Välj svårighetsgrad:</h2>
-    <div className="difficulty-menu">
-  <button 
-    className={difficulty === "easy" ? "selected easy-btn" : "easy-btn"} 
-    onClick={() => setDifficulty("easy")}
-  >
-    Lätt
-  </button>
-  <button 
-    className={difficulty === "medium" ? "selected medium-btn" : "medium-btn"} 
-    onClick={() => setDifficulty("medium")}
-  >
-    Medel
-  </button>
-  <button 
-    className={difficulty === "hard" ? "selected hard-btn" : "hard-btn"} 
-    onClick={() => setDifficulty("hard")}
-  >
-    Svår
-  </button>
-</div>
+            <div className="main-frame-container">
+              <div className="content-container">
+                  <h1 className="heading">Välkommen, {username}!</h1>
 
 
+                  {/* Svårighetsnivå */}
+                  <h2 className="subtitle">Välj svårighetsgrad:</h2>
+                  <div className="difficulty-menu">
+                      <button className={difficulty === "easy" ? "selected easy-btn" : "easy-btn"} 
+                          onClick={() => setDifficulty("easy")}>Lätt</button>
+                      <button className={difficulty === "medium" ? "selected medium-btn" : "medium-btn"} 
+                          onClick={() => setDifficulty("medium")}>Medel</button>
+                      <button className={difficulty === "hard" ? "selected hard-btn" : "hard-btn"} 
+                          onClick={() => setDifficulty("hard")}>Svår</button>
+                  </div>
 
-    <h2 className="subtitle">Välj ett spel:</h2>
-    <div className="menu">
-      <button onClick={() => setOption("multiplikation")}>Multiplikation</button>
-      <button onClick={() => setOption("division")}>Division</button>
-      <button onClick={() => setOption("addition")}>Addition</button>
-      <button onClick={() => setOption("subtraktion")}>Subtraktion</button>
-    </div>
+                  {/* Quizval */}
+                  <h2 className="subtitle">Välj ett spel:</h2>
+                  <div className="menu">
+                      <button onClick={() => setOption("addition")}>Addition</button>
+                      <button onClick={() => setOption("subtraktion")}>Subtraktion</button>
+                      <button onClick={() => setOption("multiplikation")}>Multiplikation</button>
+                      <button onClick={() => setOption("division")}>Division</button>
+                  </div>
 
-    <h2 className="subtitle">Övningar</h2>
-    <div className="menu">
-      <button onClick={() => setOption("tabeller")}>Öva på multiplikationstabeller</button>
-    </div>
-  </div>
+                  {/* Övningar: Multiplikationstabellerna */}
+                  <h2 className="subtitle">Övningar</h2>
+                  <div className="menu">
+                      <button onClick={() => setOption("tabeller")}>Öva på multiplikationstabeller</button>
+                  </div>
 
-</div>
+                  <br />
 
-          {/* Highscore-tavla */}
-          <div className="highscore-container">
-            <h3>🏆 Highscore</h3>
-            {Object.entries(highScores).map(([userGame, q]) => (
-              <div key={userGame}>
-                <strong>{userGame.replace("-", " - ")}:</strong>
-                <ul>
-                  {(() => {
-                    let scores: number[] = [];
-                    let temp = q;
-                  while (temp !== null) {
-                    scores.push(head(temp));
-                    temp = dequeue(temp);
-                  }
-                  return scores.map((s, index) => <li key={index}>{s} poäng</li>);
-                })()}
-              </ul>
-            </div>
-          ))}
-        </div>
+                   {/* Highscore-tavla */}
+                   <div className="highscore-container">
+                      <h3>🏆 Highscore</h3>
+                      
+                      {Object.entries(highScores).map(([userGame, q]) => (
+                          <div key={userGame}>
+                              <strong>{userGame.replace("-", " - ")}:</strong>
+                              <ul>
+                                  {(() => {
+                                      let scores: number[] = [];
+                                      let temp = q;
+                                      while (temp !== null) {
+                                          scores.push(head(temp));
+                                          temp = dequeue(temp);
+                                      }
+                                      return scores.map((s, index) => <li key={index}>{s} poäng</li>);
+                                  })()}
+                              </ul>
+                           </div>
+                      ))}
+                   </div>
+
+              </div>
+           </div>
         </>
       ) : (
         <>
           <button className="back-button" onClick={() => setOption(null)}>
             ⬅ Tillbaka till menyn
           </button>
-          {option === "multiplikation" && <MultiplicationGame difficulty={difficulty} updateHighScore={updateHighScore} />}
-          {option === "division" && <Division difficulty={difficulty} updateHighScore={updateHighScore} />}
           {option === "addition" && <Addition difficulty={difficulty} updateHighScore={updateHighScore} />}
           {option === "subtraktion" && <Subtraktion difficulty={difficulty} updateHighScore={updateHighScore} />}
+          {option === "multiplikation" && <MultiplicationGame difficulty={difficulty} updateHighScore={updateHighScore} />}
+          {option === "division" && <Division difficulty={difficulty} updateHighScore={updateHighScore} />}
           {option === "tabeller" && <TableMultiplication data={data} />} 
         </>
       )}
-    </div>
+
+      </div>
+
   );
 };
 

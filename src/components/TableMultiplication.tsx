@@ -92,28 +92,33 @@ const TableMultiplication: React.FC <{ data: any[] }> = ({ data }) => {
   };
 
   return (
-    <div className="game-container">
+    <div className="game-frame-container">
       {!selectedTable ? (
-        <div>
+        <div className = "table-selection-container">
           <h2>Välj en multiplikationstabell:</h2>
-          {[...Array(10)].map((_, num) => (
+            <div className="table-buttons">
+            {[...Array(10)].map((_, num) => (
             // här välj den aktuella tabellen ut från csv filen (som sedan används i newQueue)
             <button key={num + 1} onClick={() => setSelectedTable(`table${num + 1}`)}>
               Tabell {num + 1}
             </button>
           ))}
         </div>
+      </div>
       ) : gameOver ? (
-        <div className="game-over">
-          <h2>🎮 Game Over! 🎉</h2>
-          <p>Du fick {score} av {totalRounds} rätt.</p>
-          <button onClick={restartGame}>🔄 Spela igen</button>
-        </div>
+        <div className="game-container">
+          <div className="game-over">
+            <h2>🎮 Game Over! 🎉</h2>
+            <p>Du fick {score} av {totalRounds} rätt.</p>
+            <button onClick={restartGame}>🔄 Spela igen</button>
+          </div>
+        </div> 
       ) : (
         <>
-          <h2>Fråga {round}/{totalRounds}</h2>
-          {!is_empty(questionQueue) && (
-            <p>{head(questionQueue)[0]} × {head(questionQueue)[1]} = ?</p>
+          <div className="game-container">
+            <h2>Fråga {round}/{totalRounds}</h2>
+            {!is_empty(questionQueue) && (
+              <p>{head(questionQueue)[0]} × {head(questionQueue)[1]} = ?</p>
           )}
 
           <input
@@ -130,6 +135,7 @@ const TableMultiplication: React.FC <{ data: any[] }> = ({ data }) => {
           <button onClick={checkAnswer}>Svara</button>
           <p>{message}</p>
           <p>Poäng: {score}</p>
+          </div>
         </>
       )}
     </div>

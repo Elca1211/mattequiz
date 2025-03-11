@@ -34,19 +34,27 @@ const Subtraktion: React.FC<SubtraktionProps> = ({ difficulty, updateHighScore }
     useEffect(getRandomNumbers, []);
 
     const checkAnswer = () => {
-        const correctAnswer = num1 - num2;
-        setMessage(parseInt(userAnswer) === correctAnswer 
-                                    ? "✅ Rätt svar!" 
-                                    : `❌ Fel! Rätt svar var ${correctAnswer}`);
-        if (parseInt(userAnswer) === correctAnswer) setScore((prev) => prev + points);
+        if (gameOver) return;
 
+        const correctAnswer = num1 - num2;
+        const isCorrect = parseInt(userAnswer) === correctAnswer;
+        setMessage(isCorrect
+                    ? "✅ Rätt svar!" 
+                    : `❌ Fel! Rätt svar var ${correctAnswer}`
+        );
+        let newScore = score;
+        if (isCorrect) {
+            newScore += points;
+            setScore(newScore);
+        }
+            
         if (round < totalRounds) {
-            setRound(round + 1);
+            setRound(prev => prev + 1);
             getRandomNumbers();
             setUserAnswer("");
         } else {
-            setGameOver(true);
-            updateHighScore(score, "Subtraktion");
+            setGameOver(true);  
+            updateHighScore(newScore, "Subtraktion"); 
         }
     };
 
@@ -59,9 +67,10 @@ const Subtraktion: React.FC<SubtraktionProps> = ({ difficulty, updateHighScore }
     };
 
     return (
+        <div className="game-frame-container">
         <div className="game-container">
             {gameOver ? (
-                <div className="game-over">
+                <div>
                     <h2>🎮 Game Over! 🎉</h2>
                     <p>Du fick {score} poäng!</p>
                     <button onClick={restartGame}>🔄 Spela igen</button>
@@ -81,6 +90,7 @@ const Subtraktion: React.FC<SubtraktionProps> = ({ difficulty, updateHighScore }
                     <p>Poäng: {score}</p>
                 </>
             )}
+            </div>
         </div>
     );
 };

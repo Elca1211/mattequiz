@@ -33,21 +33,32 @@ const Division: React.FC<DivisionProps> = ({ difficulty, updateHighScore }) => {
   useEffect(getRandomNumbers, []);
 
   const checkAnswer = () => {
+    if (gameOver) return;
+    
     const correctAnswer = num1 / num2;
-    setMessage(parseInt(userAnswer) === correctAnswer 
-                                ? "✅ Rätt svar!" 
-                                : `❌ Fel! Rätt svar var ${correctAnswer}`);
-    if (parseInt(userAnswer) === correctAnswer) setScore((prev) => prev + points);
+    const isCorrect = parseInt(userAnswer) === correctAnswer;
+
+    setMessage(isCorrect 
+                ? "✅ Rätt svar!" 
+                : `❌ Fel! Rätt svar var ${correctAnswer}`
+              );
+
+    let newScore = score;
+    if (isCorrect) {
+        newScore += points;
+        setScore(newScore);
+    }
 
     if (round < totalRounds) {
-      setRound(round + 1);
-      getRandomNumbers();
-      setUserAnswer("");
+        setRound(prev => prev + 1);
+        getRandomNumbers();
+        setUserAnswer("");
     } else {
-      setGameOver(true);
-      updateHighScore(score, "Division");
+        setGameOver(true);  
+        updateHighScore(newScore, "Division"); 
     }
-  };
+};
+
 
   const restartGame = () => {
     setScore(0);
@@ -58,9 +69,10 @@ const Division: React.FC<DivisionProps> = ({ difficulty, updateHighScore }) => {
   };
 
   return (
-    <div className="game-container">
-      {gameOver ? (
-        <div className="game-over">
+    <div className="game-frame-container">
+      <div className="game-container">
+        {gameOver ? (
+        <div>
           <h2>🎮 Game Over! 🎉</h2>
           <p>Du fick {score} poäng!</p>
           <button onClick={restartGame}>🔄 Spela igen</button>
@@ -80,6 +92,7 @@ const Division: React.FC<DivisionProps> = ({ difficulty, updateHighScore }) => {
           <p>Poäng: {score}</p>
         </>
       )}
+    </div>
     </div>
   );
 };

@@ -29,22 +29,29 @@ const Addition: React.FC<AdditionProps> = ({ difficulty, updateHighScore }) => {
     useEffect(getRandomNumbers, []);
 
     const checkAnswer = () => {
-        const correctAnswer = num1 + num2;
-        setMessage(parseInt(userAnswer) === correctAnswer 
-                                    ? "✅ Rätt svar!" 
-                                    : `❌ Fel! Rätt svar var ${correctAnswer}`);
-        if (parseInt(userAnswer) === correctAnswer) setScore((prev) => prev + points);
-    
+        if (gameOver) return;
 
+        const correctAnswer = num1 + num2;
+        const isCorrect = parseInt(userAnswer) === correctAnswer;
+        setMessage(isCorrect
+                    ? "✅ Rätt svar!" 
+                    : `❌ Fel! Rätt svar var ${correctAnswer}`
+        );
+        let newScore = score;
+        if (isCorrect) {
+            newScore += points;
+            setScore(newScore);
+        }
+            
         if (round < totalRounds) {
-            setRound(round + 1);
+            setRound(prev => prev + 1);
             getRandomNumbers();
             setUserAnswer("");
         } else {
-            setGameOver(true);
-            updateHighScore(score, "Addition");
+            setGameOver(true);  
+            updateHighScore(newScore, "Addition"); 
         }
-    };
+    };     
 
     const restartGame = () => {
         setScore(0);
@@ -55,28 +62,30 @@ const Addition: React.FC<AdditionProps> = ({ difficulty, updateHighScore }) => {
     };
 
     return (
-        <div className="game-container">
-            {gameOver ? (
-                <div className="game-over">
-                    <h2>🎮 Game Over! 🎉</h2>
-                    <p>Du fick {score} poäng!</p>
-                    <button onClick={restartGame}>🔄 Spela igen</button>
-                </div>
-            ) : (
-                <>
-                    <h2>Fråga {round}/{totalRounds}</h2>
-                    <p>{num1} + {num2} = ?</p>
-                    <input
-                        type="number"
-                        value={userAnswer}
-                        onChange={(e) => setUserAnswer(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
-                    />
-                    <button onClick={checkAnswer}>Svara</button>
-                    <p>{message}</p>
-                    <p>Poäng: {score}</p>
-                </>
-            )}
+        <div className="game-frame-container">
+            <div className="game-container">
+                {gameOver ? (
+                    <div>
+                        <h2>🎮 Game Over! 🎉</h2>
+                        <p>Du fick {score} poäng!</p>
+                        <button onClick={restartGame}>🔄 Spela igen</button>
+                    </div>
+                ) : (
+                    <>
+                        <h2>Fråga {round}/{totalRounds}</h2>
+                        <p>{num1} + {num2} = ?</p>
+                        <input
+                            type="number"
+                            value={userAnswer}
+                            onChange={(e) => setUserAnswer(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
+                        />
+                        <button onClick={checkAnswer}>Svara</button>
+                        <p>{message}</p>
+                        <p>Poäng: {score}</p>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
