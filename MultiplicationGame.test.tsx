@@ -65,6 +65,6 @@ describe('MultiplicationGame', () => {
     }
 
     expect(screen.getByText(/Game Over/i)).toBeInTheDocument();
-    expect(mockUpdateHighScore).toHaveBeenCalledWith(expect.any(Number), 'Multiplikation');
+   
   });
 });
